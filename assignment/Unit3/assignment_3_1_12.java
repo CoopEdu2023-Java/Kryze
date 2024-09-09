@@ -68,18 +68,23 @@ public class assignment_3_1_12 {
         LinkedStack<Character> tokens = new LinkedStack<>();
         String input = scanner.nextLine();
         for (int i = 0; i < input.length(); i++) {
-            tokens.push(input.charAt(i));
-            if ((input.charAt(i) == ')' && input.charAt(i - 1) == '(')
-                    || (input.charAt(i) == ']' && input.charAt(i - 1) == '[')
-                    || (input.charAt(i) == '}' && input.charAt(i - 1) == '{')) {
-                if (tokens.size() < 2) {
-                    System.out.println("false");
-                    break;
+            if (!tokens.isEmpty()) {
+                if ((input.charAt(i) == ')' && tokens.peek() == '(')
+                        || (input.charAt(i) == ']' && tokens.peek() == '[')
+                        || (input.charAt(i) == '}' && tokens.peek() == '{')) {
+                    if (tokens.size() < 1) {
+                        System.out.println("false");
+                        return;
+                    } else {
+                        tokens.pop();
+                    }
                 } else {
-                    tokens.pop();
-                    tokens.pop();
+                    tokens.push(input.charAt(i));
                 }
+            } else {
+                tokens.push(input.charAt(i));
             }
+
         }
         if (tokens.isEmpty())
             System.out.println("true");
