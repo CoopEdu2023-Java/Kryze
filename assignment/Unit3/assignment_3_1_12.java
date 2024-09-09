@@ -71,7 +71,7 @@ public class assignment_3_1_12 {
             tokens.push(input.charAt(i));
             if ((input.charAt(i) == ')' && input.charAt(i - 1) == '(')
                     || (input.charAt(i) == ']' && input.charAt(i - 1) == '[')
-                    || (input.charAt(i) == '{' && input.charAt(i - 1) == '}')) {
+                    || (input.charAt(i) == '}' && input.charAt(i - 1) == '{')) {
                 if (tokens.size() < 2) {
                     System.out.println("false");
                     break;
