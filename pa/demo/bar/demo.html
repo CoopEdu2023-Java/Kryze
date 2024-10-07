@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自定义滚动条示例</title>
+  <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="left-section">
+      <div class="image-placeholder"></div>
+    </div>
+    <div class="right-section">
+      <h1>作品名称</h1>
+      <div class="author-info">
+        <div class="author-photo">
+          <img src="https://via.placeholder.com/50" alt="作者照片">
+        </div>
+        <div class="author-details">
+          <p><strong>作者</strong></p>
+          <p>作者介绍</p>
+        </div>
+      </div>
+      <div class="description">
+        <h2>作品介绍</h2>
+        <div class="scrollable-text" data-simplebar>
+          <p>
+            每个中国人在出生时都会被分配一组公民身份号码（CIDN），它完全代表了每个人在社会中的身份。这份报告的话题涉及身份证号码，涉及两个主要问题：截至目前中国政府发布的CIDN的最大数量，以及目前正在使用的有效CIDN的估计数量。研究深入了解了CIDN结构演变的背景信息，分析了其组成部分的变化，经由假设与计算后，解答了这两个问题。
+          </p>
+          <p>Each Chinese is assigned with a set of fixed digits called their Citizenship Identity Number (CIDN) the
+            moment they are born, and it represents their identity in the society. This report focuses on Chinese ID
+            numbers and aims to answer two main questions: the maximum number of CIDNs issued by the Chinese government
+            to date and the estimated number of valid CIDNs currently in use.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
+</body>
+
+</html>
