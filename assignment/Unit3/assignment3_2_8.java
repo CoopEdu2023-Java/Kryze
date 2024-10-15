@@ -1,8 +1,8 @@
 public class assignment3_2_8 {
-    class AVLNode<T> {
+    class AVLNode<T extends Comparable<T>> {
         T value;
-        TreeNode left;
-        TreeNode right;
+        AVLNode<T> left;
+        AVLNode<T> right;
         int height;
 
         public AVLNode(T x) {
@@ -45,7 +45,7 @@ public class assignment3_2_8 {
         private AVLNode<T> balance(AVLNode<T> node) {
             int balanceFactor = getBalanceFactor(node);
             if (balanceFactor == 2) {
-                if (getBalanceFactor(node.left) == 1) {
+                if (getBalanceFactor(node.left) >= 0) {
                     return rightRotate(node);
                 } else if (getBalanceFactor(node.left) == -1) {
                     node.left = leftRotate(node.left);
@@ -53,7 +53,7 @@ public class assignment3_2_8 {
                 }
             }
             if (balanceFactor == -2) {
-                if (getBalanceFactor(node.right) == -1) {
+                if (getBalanceFactor(node.right) <= 0) {
                     return leftRotate(node);
                 } else if (getBalanceFactor(node.right) == 1) {
                     node.right = rightRotate(node.right);
@@ -65,25 +65,24 @@ public class assignment3_2_8 {
 
         private AVLNode<T> insert(AVLNode<T> root, T x) {
             if (root == null) {
-                return new AVLNode<T>(x);
+                return new AVLNode<>(x);
             }
-            if (x < root.value) {
+            if (x.compareTo(root.value) < 0) {
                 root.left = insert(root.left, x);
             } else {
                 root.right = insert(root.right, x);
             }
             updateHeight(root);
-            root = balance(root);
-            return root;
+            return balance(root);
         }
 
         public AVLNode<T> delete(AVLNode<T> root, T x) {
             if (root == null) {
                 return null;
             }
-            if (x < root.value) {
+            if (x.compareTo(root.value) < 0) {
                 root.left = delete(root.left, x);
-            } else if (x > root.value) {
+            } else if (x.compareTo(root.value) > 0) {
                 root.right = delete(root.right, x);
             } else {
                 if (root.left == null) {
@@ -91,16 +90,29 @@ public class assignment3_2_8 {
                 } else if (root.right == null) {
                     return root.left;
                 }
-                root.value = findMin(root.right);
+                root.value = findMin(root.right).value;
                 root.right = delete(root.right, root.value);
             }
             updateHeight(root);
-            root = balance(root);
-            return root;
+            return balance(root);
+        }
+
+        private AVLNode<T> findMin(AVLNode<T> node) {
+            while (node.left != null) {
+                node = node.left;
+            }
+            return node;
         }
     }
 
     public static void main(String[] args) {
+        assignment3_2_8 tree = new assignment3_2_8();
+        AVLNode<Integer> root = tree.new AVLNode<>(10);
+        root = root.insert(root, 5);
+        root = root.insert(root, 20);
+        root = root.insert(root, 4);
+        root = root.insert(root, 15);
 
+        root = root.delete(root, 5);
     }
 }
