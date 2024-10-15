@@ -1,8 +1,10 @@
-public class assignment3_2_8 {
-    class AVLNode<T> {
+public class assignment3_2_10 {
+
+    // AVLNode 定义
+    class AVLNode<T extends Comparable<T>> {
         T value;
-        TreeNode left;
-        TreeNode right;
+        AVLNode<T> left;
+        AVLNode<T> right;
         int height;
 
         public AVLNode(T x) {
@@ -45,7 +47,7 @@ public class assignment3_2_8 {
         private AVLNode<T> balance(AVLNode<T> node) {
             int balanceFactor = getBalanceFactor(node);
             if (balanceFactor == 2) {
-                if (getBalanceFactor(node.left) == 1) {
+                if (getBalanceFactor(node.left) >= 0) {
                     return rightRotate(node);
                 } else if (getBalanceFactor(node.left) == -1) {
                     node.left = leftRotate(node.left);
@@ -53,7 +55,7 @@ public class assignment3_2_8 {
                 }
             }
             if (balanceFactor == -2) {
-                if (getBalanceFactor(node.right) == -1) {
+                if (getBalanceFactor(node.right) <= 0) {
                     return leftRotate(node);
                 } else if (getBalanceFactor(node.right) == 1) {
                     node.right = rightRotate(node.right);
@@ -65,25 +67,24 @@ public class assignment3_2_8 {
 
         private AVLNode<T> insert(AVLNode<T> root, T x) {
             if (root == null) {
-                return new AVLNode<T>(x);
+                return new AVLNode<>(x);
             }
-            if (x < root.value) {
+            if (x.compareTo(root.value) < 0) {
                 root.left = insert(root.left, x);
             } else {
                 root.right = insert(root.right, x);
             }
             updateHeight(root);
-            root = balance(root);
-            return root;
+            return balance(root);
         }
 
         public AVLNode<T> delete(AVLNode<T> root, T x) {
             if (root == null) {
                 return null;
             }
-            if (x < root.value) {
+            if (x.compareTo(root.value) < 0) {
                 root.left = delete(root.left, x);
-            } else if (x > root.value) {
+            } else if (x.compareTo(root.value) > 0) {
                 root.right = delete(root.right, x);
             } else {
                 if (root.left == null) {
@@ -91,16 +92,37 @@ public class assignment3_2_8 {
                 } else if (root.right == null) {
                     return root.left;
                 }
-                root.value = findMin(root.right);
+                root.value = findMin(root.right).value;
                 root.right = delete(root.right, root.value);
             }
             updateHeight(root);
-            root = balance(root);
-            return root;
+            return balance(root);
+        }
+
+        private AVLNode<T> findMin(AVLNode<T> node) {
+            while (node.left != null) {
+                node = node.left;
+            }
+            return node;
         }
     }
 
-    public static void main(String[] args) {
+    public AVLNode<Integer> sortedArrayToBST(int[] nums) {
+        return CreateBST(nums, 0, nums.length - 1);
+    }
 
+    private AVLNode<Integer> CreateBST(int nums[], int l, int r) {
+        if (l > r) {
+            return null;
+        }
+        int mid = l + (r - l) / 2;
+        AVLNode<Integer> root = new AVLNode<>(nums[mid]);
+        root.left = CreateBST(nums, l, mid - 1);
+        root.right = CreateBST(nums, mid + 1, r);
+        return root;
+    }
+
+    // 主程序
+    public static void main(String[] args) {
     }
 }
