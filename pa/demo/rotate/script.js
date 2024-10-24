@@ -1,73 +1,107 @@
-// 创建场景、相机和渲染器
+// 创建场景
 const scene = new THREE.Scene();
+
+// 创建相机
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+camera.position.z = 5;
+
+// 创建渲染器
+const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 创建球体几何体
-const sphereGeometry = new THREE.SphereGeometry(5, 32, 32);
-const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x888888, wireframe: true });
-const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+// 创建球体
+const geometry = new THREE.SphereGeometry(1, 32, 32);
+const material = new THREE.MeshBasicMaterial({ color: 0x0077ff, wireframe: true });
+const sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
-// 球体倾斜 - 沿Z轴向左倾斜
-sphere.rotation.z = Math.PI / 6; // 30度倾斜
+// 创建标签的父对象
+const labelParent = new THREE.Object3D();
+scene.add(labelParent);
 
-// 添加光源
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambientLight);
+// 创建标签
+const labelGeometry = new THREE.PlaneGeometry(0.5, 0.2);
+const labelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+const label = new THREE.Mesh(labelGeometry, labelMaterial);
+// 将标签位置设置得更靠近球体，且 z 轴上稍微移到后面以便被球体遮住
+label.position.set(1.5, 0, -0.5); // z 坐标设为 -0.5，确保标签在球体后方
+labelParent.add(label);
 
-const pointLight = new THREE.PointLight(0xffffff, 1);
-pointLight.position.set(10, 10, 10);
-scene.add(pointLight);
+// 设置球体和标签的渲染顺序
+sphere.renderOrder = 0; // 确保球体在标签之后渲染
+label.renderOrder = 1; // 标签先渲染
 
-// 创建标签平面
-const tagGeometry = new THREE.PlaneGeometry(2.5, 1);
-const tagMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-const tag = new THREE.Mesh(tagGeometry, tagMaterial);
-scene.add(tag);
+// 使标签的轨道倾斜-15度
+labelParent.rotation.x = THREE.MathUtils.degToRad(-15);
 
-// 使用纹理加载器为标签添加文本
-const loader = new THREE.TextureLoader();
-loader.load('https://via.placeholder.com/250/ffffff/000000?text=数学组', (texture) => {
-  tagMaterial.map = texture;
-  tagMaterial.needsUpdate = true;
+// 旋转速度
+let rotationSpeed = 0.01;
+let isMouseOverLabel = false;
+let isMouseDown = false;
+let previousMouseX = 0;
+
+// 创建射线投射器
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// 监听鼠标移动事件
+document.addEventListener('mousemove', (event) => {
+  // 将鼠标位置转换为标准化设备坐标
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // 更新射线投射器
+  raycaster.setFromCamera(mouse, camera);
+
+  // 检测与标签的交互
+  const intersects = raycaster.intersectObject(label);
+  if (intersects.length > 0) {
+    isMouseOverLabel = true;
+  } else {
+    isMouseOverLabel = false;
+  }
+
+  // 检查鼠标是否按下，并根据鼠标移动方向调整旋转方向
+  if (isMouseDown) {
+    const deltaX = event.clientX - previousMouseX;
+    labelParent.rotation.y += deltaX * 0.01; // 根据鼠标X轴的移动调整旋转方向和速度
+  }
+
+  previousMouseX = event.clientX; // 更新上一次的鼠标X位置
 });
 
-// 设置相机位置
-camera.position.set(0, 15, 20);
-camera.lookAt(0, 0, 0);
+// 监听鼠标按下事件
+document.addEventListener('mousedown', (event) => {
+  isMouseDown = true;
+  previousMouseX = event.clientX; // 记录按下时的鼠标X位置
+});
 
-// 动画循环
+// 监听鼠标抬起事件
+document.addEventListener('mouseup', () => {
+  isMouseDown = false;
+});
+
+// 动画函数
 function animate() {
   requestAnimationFrame(animate);
 
-  // 标签沿着倾斜的球体轨迹旋转
-  const elapsedTime = Date.now() * 0.001; // 时间，以秒为单位
-  const radius = 7; // 标签距离球体中心的距离
-  const tiltAngle = Math.PI / 6; // 球体倾斜角度（30度）
+  // 默认旋转
+  if (!isMouseDown) {
+    labelParent.rotation.y += rotationSpeed; // 默认旋转速度
+  }
 
-  // 计算标签的位置，使其沿着倾斜轨迹旋转
-  const x = radius * Math.cos(elapsedTime);
-  const y = radius * Math.sin(elapsedTime) * Math.cos(tiltAngle); // Y方向考虑倾斜
-  const z = radius * Math.sin(elapsedTime) * Math.sin(tiltAngle); // Z方向也需要考虑倾斜
+  // 根据鼠标状态调整标签大小
+  if (isMouseOverLabel) {
+    label.scale.set(1.5, 1.5, 1.5); // 放大标签
+  } else {
+    label.scale.set(1, 1, 1); // 恢复标签大小
+  }
 
-  tag.position.set(x, y, z);
+  // 使标签始终面向相机
+  label.lookAt(camera.position);
 
-  // 使标签始终面向相机（保持比例不变，只是远近效果）
-  tag.lookAt(camera.position);
-
-  // 渲染场景
   renderer.render(scene, camera);
 }
 
-// 处理窗口大小调整
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-// 启动动画循环
 animate();
