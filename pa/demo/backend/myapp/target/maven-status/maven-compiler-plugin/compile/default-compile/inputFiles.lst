@@ -1,0 +1,6 @@
+/root/backend/myapp/src/main/java/com/example/myapp/service/UserService.java
+/root/backend/myapp/src/main/java/com/example/myapp/repository/UserRepository.java
+/root/backend/myapp/src/main/java/com/example/myapp/controller/AuthController.java
+/root/backend/myapp/src/main/java/com/example/myapp/config/SecurityConfig.java
+/root/backend/myapp/src/main/java/com/example/App.java
+/root/backend/myapp/src/main/java/com/example/myapp/model/User.java
