@@ -6,23 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.demo.dto.*;
+import com.example.demo.service.impl.*;;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    private AuthService authService;
+    AuthServiceImpl authService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginUser) {
-        String response = authService.login(loginUser);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public String login(@RequestBody LoginDto loginUser) {
+        return authService.login(loginUser);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User registerUser) {
-        String response = authService.register(registerUser);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public void register(@RequestBody RegisterDto registerUser) {
+        authService.register(registerUser);
     }
 }

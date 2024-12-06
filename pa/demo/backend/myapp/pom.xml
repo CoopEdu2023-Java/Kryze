@@ -31,6 +31,12 @@
 	</properties>
 	<dependencies>
 	<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.30</version> <!-- 请使用最新稳定版本 -->
+    <scope>provided</scope>
+</dependency>
+	<dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-api</artifactId>
     <version>0.12.6</version>
@@ -84,7 +90,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>
